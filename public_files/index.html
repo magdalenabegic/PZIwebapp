@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskCheckup</title>
+    <script src = "/js/main.js"></script>
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url('/public_files/font/Roboto-Regular.ttf') format('truetype');
+            }
+        body {
+            margin: 0;
+            font-family: 'Roboto';
+            color: #353938;
+        }
+
+        .navbar {
+            overflow: hidden;
+            padding: 30px;
+        }
+
+        .nav-main {
+            font-weight: 900;
+            color: #353938;
+            font-size: 25px;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            text-align: center;
+            padding: 14px 36px;
+            text-decoration: none;
+        }
+
+        .button {
+            color: white !important;
+            background-color: #353938;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 10px;
+        }
+
+        .navbar-right {
+            float: right;
+            font-weight: 540;
+            margin-right: 50px;
+        }
+
+        .navbar-right a {
+            color: #353938;
+        }
+
+        .button:hover {
+            background-color: #8964F1;
+        }
+
+        .navbar-right a:hover {
+            color: #8964F1;
+        }
+
+        /* Dodano za hamburger ikonu */
+        .icon {
+            display: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #353938;
+        }
+
+        @media screen and (max-width: 768px) {
+            .navbar a, .navbar-right {
+                float: none;
+                display: block;
+                text-align: left;
+                width: 100%;
+            }
+
+            .navbar-right {
+                margin-top: 20px;
+            }
+
+            .icon {
+                display: block;
+                float: right;
+                margin-top: 20px;
+            }
+        }
+
+        .hero{
+          text-align: left;
+          padding-left: 150px;
+          margin-top: 150px;
+          font-size: 30px;
+        }
+
+        .hero h4{
+          font-weight: 10;
+          font-size: 25px;
+        }
+        .center {
+            text-align: center;
+        }
+
+        .homework-section {
+            margin-top: 200px;
+        }
+
+        .homework-text {
+            margin-top: 300px;
+            margin-bottom: 50px; 
+            font-size: 48px;
+            font-weight: 50;
+        }
+
+        .twobuttons button {
+            margin-right: 10px; 
+            margin-bottom: 100px;
+            width: 275px !important;
+            height: 62px !important;
+            top: 1241px;
+            left: 427px;
+            border-radius: 20px;
+        }
+
+        .homework-image img {
+            max-width: 100%;
+            margin-top: 100px;
+        }
+
+        .purple-button{
+            background-color: #8964F1;
+        }
+
+      </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="#" class = "nav-main">TaskCheckup</a>
+        <div class="navbar-right">
+            <a href="#">About</a>
+            <a href="#">Courses</a>
+            <a href="/pages/get_started/index.html" class="button">Get Started</a>
+        </div>
+        <div class="icon">&#9776;</div>
+    </div>
+    <div class="hero">
+      <h1>Each review is a roadmap <br>to improvement.</h1>
+      <h4>Where homework stops being a challenge and <br>starts becoming a triumph.</h4>
+    </div>
+    <div class="homework-section">
+        <div class="homework-text">
+            <p class="center">Submit your homework, embrace the <br>feedback, and watch your progress unfold.</p>
+        </div>
+        <div class="homework-buttons center">
+            <a href="/pages/get_started/index.html" class="twobuttons button">Get Started</a>          
+            <a href="" class="twobuttons button purple-button">How does it work</a>
+        </div>
+        <div class="homework-image center">
+            <img src="img/landingpage-example.png" alt="Homework Image">
+        </div>
+        <h2>BUTTONS ZA TESTIRANJE</h2>
+        <a href="/pages/profesor/index.html">Profesor</a>
+        <a href="/pages/student/index.html">Student</a>
+    </div>
+    
+    <script>
+      var navbar = document.getElementById('myNavbar');
+      var icon = document.querySelector('.icon');
+  
+      icon.addEventListener('click', function () {
+          navbar.classList.toggle('responsive');
+      });
+  </script>
+</body>
+</html>
