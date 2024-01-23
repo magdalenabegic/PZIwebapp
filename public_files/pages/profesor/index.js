@@ -40,21 +40,21 @@ class StudentiComponent extends HTMLElement {
     async prikaziStudente() {
         try {
             const response = await fetch('/api/studenti');
-
+    
             if (!response.ok) {
                 console.error('Greška prilikom dohvaćanja studenata:', response.status, response.statusText);
                 return;
             }
     
             console.log(response);
-
+    
             const studenti = await response.json();
-
-            const tbody = this.querySelector('tbody'); //OVDJE NE IDE SHADOWROOT!!!
-
+    
+            const tbody = this.shadowRoot.querySelector('tbody');
+    
             // Očisti trenutni sadržaj tablice
             tbody.innerHTML = '';
-
+    
             // Popuni tablicu s podacima o studentima
             studenti.forEach(student => {
                 const tr = document.createElement('tr');
@@ -68,15 +68,21 @@ class StudentiComponent extends HTMLElement {
                     </td>
                 `;
                 tbody.appendChild(tr);
-
+    
                 // Add event listener for the newly created izbrisiBtn
-                const izbrisiBtn = tr.shadowRoot.querySelector('.izbrisiBtn');
+                const izbrisiBtn = tr.querySelector('.izbrisiBtn');
                 izbrisiBtn.addEventListener('click', this.izbrisiStudenta.bind(this));
             });
-
+    
         } catch (error) {
             console.error('Greška prilikom dohvaćanja studenata:', error);
         }
+    }
+    
+    connectedCallback() {
+        this.prikaziStudente();
+    
+        this.shadowRoot.querySelector('#dodajStudentaBtn').addEventListener('click', this.dodajStudentaForma.bind(this));
     }
 
     async dodajStudenta() {
