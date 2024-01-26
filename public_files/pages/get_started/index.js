@@ -148,68 +148,63 @@ class SignupForm extends HTMLElement {
         } else {
             console.error('Pogrešni korisnički podaci');
         }
-    }
-    
+    } 
     
     handleSignup(event) {
         event.preventDefault();
 
         const firstName = this.shadowRoot.getElementById('firstName').value;
         const lastName = this.shadowRoot.getElementById('lastName').value;
-        const email = this.shadowRoot.getElementById('email').value;
+        const mail = this.shadowRoot.getElementById('email').value;
         const password = this.shadowRoot.getElementById('password').value;
         const confirmPassword = this.shadowRoot.getElementById('confirmPassword').value;
 
-        // Dobavljanje odabranih predmeta
         const selectedSubjects = [];
         const checkboxes = this.shadowRoot.querySelectorAll('input[type="checkbox"]:checked');
         checkboxes.forEach(checkbox => {
             selectedSubjects.push(checkbox.labels[0].innerText);
         });
 
-        // Logiranje podataka forme
         console.log('Podaci forme:');
         console.log('Ime:', firstName);
         console.log('Prezime:', lastName);
-        console.log('Email:', email);
+        console.log('Email:', mail);
         console.log('Predmeti:', selectedSubjects.join(', '));
         console.log('Lozinka:', password);
         console.log('Potvrda lozinke:', confirmPassword);
 
-        //logika za pohranu podataka u bazu
-        async function saveDataToDatabase(data) {
-            try {
-                const response = await fetch('/api/studenti', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log(result.message);
-                } else {
-                    console.error('Greška prilikom pohrane podataka:', response.status, response.statusText);
-                }
-            } catch (error) {
-                console.error('Greška prilikom izvršavanja fetch zahtjeva:', error);
-            }
-        }
-
         const data = {
-            ime: 'Ime',
-            prezime: 'Prezime',
-            email: 'ime.prezime@example.com',
-            predmeti: ['Predmet1', 'Predmet2'],
-            lozinka: ''
+            ime: firstName,
+            prezime: lastName,
+            mail: mail,
+            predmeti: selectedSubjects,
+            lozinka: password
         };
 
-saveDataToDatabase(data);
+        console.log('Data object to be sent to the server:', data);
 
+        this.saveDataToDatabase('/api/studenti', data);
+    }
 
-        this.shadowRoot.getElementById('successMessageSignup').style.display = 'block';
+    async saveDataToDatabase(apiEndpoint, data) {
+        try {
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+    
+            if (response.ok) {
+                const result = await response.json();
+                console.log(result.message);
+            } else {
+                console.error('Greška prilikom pohrane podataka:', response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error('Greška prilikom izvršavanja fetch zahtjeva:', error);
+        }
     }
 
 }
