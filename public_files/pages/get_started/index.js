@@ -56,7 +56,7 @@ class SignupForm extends HTMLElement {
             </style>
             <button id="professorButton">Nastavi kao profesor</button>
             <button id="studentButton">Nastavi kao student</button>
-            <!-- Signup forma-->
+            <!-- Student Signup forma-->
             <form id="signupForm" style="display: none;">
                 <h1>Sign Up</h1>
 
@@ -92,7 +92,18 @@ class SignupForm extends HTMLElement {
 
                 <button type="submit">Registriraj se</button>
             </form>
-            <!-- Login forma -->
+            <!-- Student Login forma-->
+            <form id="studentLoginForm" style="display: none;">
+                <h1>Log In</h1>
+                <label for="loginEmail">Email:</label>
+                <input type="email" id="loginEmail" name="loginEmail" required>
+
+                <label for="loginPassword">Lozinka:</label>
+                <input type="password" id="loginPassword" name="loginPassword" required>
+
+                <button type="submit">Prijavi se</button>
+            </form>
+            <!-- Profesor Login forma -->
             <form id="loginForm" style="display: none;">
                 <h1> Log In </h1>
                 <label for="loginEmail">Email:</label>
@@ -115,17 +126,26 @@ class SignupForm extends HTMLElement {
         this.shadowRoot.getElementById('studentButton').addEventListener('click', this.showSignupForm.bind(this));
         this.shadowRoot.getElementById('signupForm').addEventListener('submit', this.handleSignup.bind(this));
         this.shadowRoot.getElementById('loginForm').addEventListener('submit', this.handleLogin.bind(this));
-    }
-
-    showLoginForm() {
-        this.shadowRoot.getElementById('loginForm').style.display = 'block';
-        this.shadowRoot.getElementById('signupForm').style.display = 'none';
+        this.shadowRoot.getElementById('studentButton').addEventListener('click', this.showStudentLoginForm.bind(this));
     }
 
     showSignupForm() {
         this.shadowRoot.getElementById('signupForm').style.display = 'block';
         this.shadowRoot.getElementById('loginForm').style.display = 'none';
     }
+
+    showLoginForm() {
+        console.log('Showing professor login form');
+        this.shadowRoot.getElementById('loginForm').style.display = 'block';
+        this.shadowRoot.getElementById('signupForm').style.display = 'none';
+    }
+    
+    showStudentLoginForm() {
+        console.log('Showing student login form');
+        this.shadowRoot.getElementById('studentLoginForm').style.display = 'block';
+        this.shadowRoot.getElementById('loginForm').style.display = 'none';
+    }
+    
 
     handleLogin(event) {
         event.preventDefault();
@@ -149,6 +169,29 @@ class SignupForm extends HTMLElement {
             console.error('Pogrešni korisnički podaci');
         }
     } 
+
+    handleStudentLogin(event) {
+        event.preventDefault();
+
+        const studentiRouter = require('/api/studenti');
+        app.use('/api/studenti', studentiRouter);
+
+        const loginEmail = this.shadowRoot.getElementById('loginEmail').value;
+        const loginPassword = this.shadowRoot.getElementById('loginPassword').value;
+
+        const mockUser = {
+            email: 'ime.prezime@example.com',
+            password: 'nekaLozinka',
+            ime: 'Ime'
+        };
+
+        if (loginEmail === mockUser.email && loginPassword === mockUser.password) {
+            console.log('Preusmjeravam studenta na:', this.redirectUrl);
+            window.location.href = this.redirectUrl;
+        }else {
+            console.error('Pogrešni korisnički podaci');
+        }
+    }
     
     handleSignup(event) {
         event.preventDefault();
