@@ -12,6 +12,7 @@
       }
       body {
         font-family: "Roboto";
+        margin: 50px;
       }
     </style>
 
@@ -46,37 +47,80 @@
             }
 
             this.predmeti = data;
+            await this.fetchProfesori(); // Dodamo poziv za dohvaćanje informacija o profesorima
             this.render();
           } catch (error) {
             console.error("Error fetching subjects:", error);
           }
         }
 
+        async fetchProfesori() {
+          try {
+            let response = await fetch("/api/profesori");
+            if (!response.ok) {
+              console.error("Error fetching professors:", response.statusText);
+              return;
+            }
+
+            let profesori = await response.json();
+
+            if (!profesori || !profesori.length) {
+              console.error("No professors found.");
+              return;
+            }
+
+            // Mapiramo profesore prema njihovim ID-ima
+            const profesoriMap = new Map(
+              profesori.map((profesor) => [profesor.id, profesor])
+            );
+
+            // Dodajemo informacije o profesorima u predmete
+            this.predmeti.forEach((predmet) => {
+              if (predmet.profesor_id) {
+                predmet.profesor = profesoriMap.get(predmet.profesor_id);
+              }
+            });
+          } catch (error) {
+            console.error("Error fetching professors:", error);
+          }
+        }
+
         render() {
           this.shadowRoot.innerHTML = `
       <style>
-        table{
+        table {
           font-size: 20px;
           width: 100%;
           height: 250px;
-          border: 1px solid #ddd;
-          border-radius: 25px;
+          align: center;
+          border-collapse: collapse;
+        }
+        th, td {
+          border: 1px solid #ddd; /* Set border style, width, and color */
           padding: 10px;
         }
         th {
           background-color: #F6F5F4;
         }
-        td{
+        td {
           border-bottom: 1px solid #ddd;
+          padding: 15px;
+        }
+        .waving-emoji {
+          width: 30px;
+          height: 33px;
+          vertical-align: middle;
+          margin-left: 5px;
+          margin-top: -5px;
         }
       </style>
         <div>
           <h1>Student dashboard</h1>
-
-          <h2>Hi, ${SESSION_DATA.ime} ${SESSION_DATA.prezime}!</h2>
+          <h2>Hi, ${SESSION_DATA.ime} ${SESSION_DATA.prezime}! <img src="/img/waving.png" class="waving-emoji"></h2>
           <table>
             <tr>
               <th>Moji predmeti</th>
+              <th>Predavači</th>
             </tr>
             <tbody>
               ${this.renderPredmeti()}
@@ -88,7 +132,14 @@
 
         renderPredmeti() {
           return this.predmeti
-            .map((predmet) => `<tr><td>${predmet.naziv}</td></tr>`)
+            .map(
+              (predmet) =>
+                `<tr><td>${predmet.naziv}</td><td>${
+                  predmet.profesor
+                    ? predmet.profesor.ime + " " + predmet.profesor.prezime
+                    : "N/A"
+                }</td></tr>`
+            )
             .join("");
         }
       }
