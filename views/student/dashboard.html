@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard</title>
+
+    <style>
+      @font-face {
+        font-family: "Roboto";
+        src: url("/font/Roboto-Regular.ttf") format("truetype");
+      }
+      body {
+        font-family: "Roboto";
+      }
+    </style>
+
+    <script>
+      window.SESSION_DATA = ____SESSION_DATA____.data;
+    </script>
+
+    <script>
+      class StudentDashboard extends HTMLElement {
+        constructor() {
+          super();
+
+          this.attachShadow({ mode: "open" });
+          this.predmeti = [];
+          this.fetchPredmeti();
+          this.render();
+        }
+
+        async fetchPredmeti() {
+          try {
+            let response = await fetch("/api/studenti/predmeti");
+            if (!response.ok) {
+              console.error("Error fetching subjects:", response.statusText);
+              return;
+            }
+
+            let data = await response.json();
+
+            if (!data || !data.length) {
+              console.error("No subjects found.");
+              return;
+            }
+
+            this.predmeti = data;
+            this.render();
+          } catch (error) {
+            console.error("Error fetching subjects:", error);
+          }
+        }
+
+        render() {
+          this.shadowRoot.innerHTML = `
+      <style>
+        table{
+          font-size: 20px;
+          width: 100%;
+          height: 250px;
+          border: 1px solid #ddd;
+          border-radius: 25px;
+          padding: 10px;
+        }
+        th {
+          background-color: #F6F5F4;
+        }
+        td{
+          border-bottom: 1px solid #ddd;
+        }
+      </style>
+        <div>
+          <h1>Student dashboard</h1>
+
+          <h2>Hi, ${SESSION_DATA.ime} ${SESSION_DATA.prezime}!</h2>
+          <table>
+            <tr>
+              <th>Moji predmeti</th>
+            </tr>
+            <tbody>
+              ${this.renderPredmeti()}
+            </tbody>
+          </table>
+        </div>
+      `;
+        }
+
+        renderPredmeti() {
+          return this.predmeti
+            .map((predmet) => `<tr><td>${predmet.naziv}</td></tr>`)
+            .join("");
+        }
+      }
+
+      customElements.define("student-dashboard", StudentDashboard);
+    </script>
+  </head>
+  <body>
+    <student-dashboard></student-dashboard>
+  </body>
+</html>

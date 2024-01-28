@@ -1,32 +1,32 @@
 class SignupForm extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this.fetchPredmeti();
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this.fetchPredmeti();
 
-        //za login profesora
-        this.redirectUrl = "/pages/profesor/index.html";
-    }
+    //za login profesora
+    this.redirectUrl = "/pages/profesor/index.html";
+  }
 
-    async fetchPredmeti() {
-        let response = await fetch('/api/predmeti');
-        this.predmeti = await response.json();
-        this.render()
-    }
+  async fetchPredmeti() {
+    let response = await fetch("/api/predmeti");
+    this.predmeti = await response.json();
+    this.render();
+  }
 
-    renderPredmet(predmet){
-        let predmetiTemplate=`<div class="group">
-            <input type="checkbox" id="subject${predmet.id}" name="subject${predmet.id}">
+  renderPredmet(predmet) {
+    let predmetiTemplate = `<div class="group">
+            <input type="checkbox" id="subject${predmet.id}" name="subject" value="${predmet.id}">
             <label for="subject${predmet.id}">${predmet.naziv}</label>
         </div>`;
-        return predmetiTemplate
+    return predmetiTemplate;
+  }
+  render() {
+    let predmetiTemplate = "";
+    for (let i of this.predmeti) {
+      predmetiTemplate = predmetiTemplate + this.renderPredmet(i);
     }
-    render() {
-        let predmetiTemplate = '';
-        for(let i of this.predmeti){
-            predmetiTemplate=predmetiTemplate+this.renderPredmet(i);
-        }
-        this.shadowRoot.innerHTML = `
+    this.shadowRoot.innerHTML = `
             <style>
                 :host {
                     display: block;
@@ -61,13 +61,13 @@ class SignupForm extends HTMLElement {
                 <h1>Sign Up</h1>
 
                 <label for="firstName">Ime:</label>
-                <input type="text" id="firstName" name="firstName" required>
+                <input type="text" id="firstName" name="ime" required>
 
                 <label for="lastName">Prezime:</label>
-                <input type="text" id="lastName" name="lastName" required>
+                <input type="text" id="lastName" name="prezime" required>
 
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="mail" required>
 
                 <label>Predmeti koje upisujete:</label>
                 ${predmetiTemplate}
@@ -85,32 +85,36 @@ class SignupForm extends HTMLElement {
                     <label for="subject3">Predmet 3</label>
                 </div>  -->
                 <label for="password">Lozinka:</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="lozinka" required>
 
                 <label for="confirmPassword">Potvrdite lozinku:</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <input type="password" id="confirmPassword" name="ponovljenaLozinka" required>
 
                 <button type="submit">Registriraj se</button>
             </form>
             <!-- Student Login forma-->
             <form id="studentLoginForm" style="display: none;">
                 <h1>Log In</h1>
-                <label for="loginEmail">Email:</label>
-                <input type="email" id="loginEmail" name="loginEmail" required>
+                <label for="stud_loginEmail">Email:</label>
+                <input type="email" id="stud_loginEmail" name="email" required>
 
-                <label for="loginPassword">Lozinka:</label>
-                <input type="password" id="loginPassword" name="loginPassword" required>
+                <label for="stud_loginPassword">Lozinka:</label>
+                <input type="password" id="stud_loginPassword" name="password" required>
+
+                <input type="hidden" name="type" value="student">
 
                 <button type="submit">Prijavi se</button>
             </form>
             <!-- Profesor Login forma -->
             <form id="loginForm" style="display: none;">
                 <h1> Log In </h1>
-                <label for="loginEmail">Email:</label>
-                <input type="email" id="loginEmail" name="loginEmail" required>
+                <label for="prof_loginEmail">Email:</label>
+                <input type="email" id="prof_loginEmail" name="email" required>
 
-                <label for="loginPassword">Lozinka:</label>
-                <input type="password" id="loginPassword" name="loginPassword" required>
+                <label for="prof_loginPassword">Lozinka:</label>
+                <input type="password" id="prof_loginPassword" name="password" required>
+
+                <input type="hidden" name="type" value="profesor">
 
                 <button type="submit">Prijavi se</button>
             </form>
@@ -122,134 +126,174 @@ class SignupForm extends HTMLElement {
             </div>
         `;
 
-        this.shadowRoot.getElementById('professorButton').addEventListener('click', this.showLoginForm.bind(this));
-        this.shadowRoot.getElementById('studentButton').addEventListener('click', this.showSignupForm.bind(this));
-        this.shadowRoot.getElementById('signupForm').addEventListener('submit', this.handleSignup.bind(this));
-        this.shadowRoot.getElementById('loginForm').addEventListener('submit', this.handleLogin.bind(this));
-        this.shadowRoot.getElementById('studentButton').addEventListener('click', this.showStudentLoginForm.bind(this));
-    }
+    this.shadowRoot
+      .getElementById("professorButton")
+      .addEventListener("click", this.showLoginForm.bind(this));
+    this.shadowRoot
+      .getElementById("studentButton")
+      .addEventListener("click", this.showSignupForm.bind(this));
+    this.shadowRoot
+      .getElementById("signupForm")
+      .addEventListener("submit", this.handleSignup.bind(this));
+    this.shadowRoot
+      .getElementById("loginForm")
+      .addEventListener("submit", this.handleLogin.bind(this));
+    this.shadowRoot
+      .getElementById("studentLoginForm")
+      .addEventListener("submit", this.handleLogin.bind(this));
+    this.shadowRoot
+      .getElementById("studentButton")
+      .addEventListener("click", this.showStudentLoginForm.bind(this));
+  }
 
-    showSignupForm() {
-        this.shadowRoot.getElementById('signupForm').style.display = 'block';
-        this.shadowRoot.getElementById('loginForm').style.display = 'none';
-    }
+  showSignupForm() {
+    this.shadowRoot.getElementById("signupForm").style.display = "block";
+    this.shadowRoot.getElementById("loginForm").style.display = "none";
+  }
 
-    showLoginForm() {
-        console.log('Showing professor login form');
-        this.shadowRoot.getElementById('loginForm').style.display = 'block';
-        this.shadowRoot.getElementById('signupForm').style.display = 'none';
-    }
-    
-    showStudentLoginForm() {
-        console.log('Showing student login form');
-        this.shadowRoot.getElementById('studentLoginForm').style.display = 'block';
-        this.shadowRoot.getElementById('loginForm').style.display = 'none';
-    }
-    
+  showLoginForm() {
+    console.log("Showing professor login form");
+    this.shadowRoot.getElementById("loginForm").style.display = "block";
+    this.shadowRoot.getElementById("signupForm").style.display = "none";
+  }
 
-    handleLogin(event) {
-        event.preventDefault();
+  showStudentLoginForm() {
+    console.log("Showing student login form");
+    this.shadowRoot.getElementById("studentLoginForm").style.display = "block";
+    this.shadowRoot.getElementById("loginForm").style.display = "none";
+  }
 
-        const profesoriRouter = require('/api/profesori');
-        app.use('/api/profesori', profesoriRouter);
-    
-        const loginEmail = this.shadowRoot.getElementById('loginEmail').value;
-        const loginPassword = this.shadowRoot.getElementById('loginPassword').value;
-    
-        const mockUser = {
-            email: 'ime.prezime@example.com',
-            password: 'nekaLozinka',
-            ime: 'Ime'
-        };
-    
-        if (loginEmail === mockUser.email && loginPassword === mockUser.password) {
-            console.log('Preusmjeravam korisnika na:', this.redirectUrl);
-            window.location.href = this.redirectUrl;
-        } else {
-            console.error('Pogrešni korisnički podaci');
+  async handleLogin(event) {
+    event.preventDefault();
+
+    const $form = event.target;
+    const formData = new FormData($form);
+    const formDataObj = Object.fromEntries(formData.entries());
+
+    console.log(formDataObj);
+
+    switch (formData.get("type")) {
+      case "profesor": {
+        const resp = await this.apiPost("/api/profesori/login", formDataObj);
+
+        if (!resp) {
+          return alert("Nešto je pošlo po krivu. Molimo probajte ponovno.");
         }
-    } 
 
-    handleStudentLogin(event) {
-        event.preventDefault();
-
-        const studentiRouter = require('/api/studenti');
-        app.use('/api/studenti', studentiRouter);
-
-        const loginEmail = this.shadowRoot.getElementById('loginEmail').value;
-        const loginPassword = this.shadowRoot.getElementById('loginPassword').value;
-
-        const mockUser = {
-            email: 'ime.prezime@example.com',
-            password: 'nekaLozinka',
-            ime: 'Ime'
-        };
-
-        if (loginEmail === mockUser.email && loginPassword === mockUser.password) {
-            console.log('Preusmjeravam studenta na:', this.redirectUrl);
-            window.location.href = this.redirectUrl;
-        }else {
-            console.error('Pogrešni korisnički podaci');
-        }
-    }
-    
-    handleSignup(event) {
-        event.preventDefault();
-
-        const firstName = this.shadowRoot.getElementById('firstName').value;
-        const lastName = this.shadowRoot.getElementById('lastName').value;
-        const mail = this.shadowRoot.getElementById('email').value;
-        const password = this.shadowRoot.getElementById('password').value;
-        const confirmPassword = this.shadowRoot.getElementById('confirmPassword').value;
-
-        const selectedSubjects = [];
-        const checkboxes = this.shadowRoot.querySelectorAll('input[type="checkbox"]:checked');
-        checkboxes.forEach(checkbox => {
-            selectedSubjects.push(checkbox.labels[0].innerText);
-        });
-
-        console.log('Podaci forme:');
-        console.log('Ime:', firstName);
-        console.log('Prezime:', lastName);
-        console.log('Email:', mail);
-        console.log('Predmeti:', selectedSubjects.join(', '));
-        console.log('Lozinka:', password);
-        console.log('Potvrda lozinke:', confirmPassword);
-
-        const data = {
-            ime: firstName,
-            prezime: lastName,
-            mail: mail,
-            predmeti: selectedSubjects,
-            lozinka: password
-        };
-
-        console.log('Data object to be sent to the server:', data);
-
-        this.saveDataToDatabase('/api/studenti', data);
-    }
-
-    async saveDataToDatabase(apiEndpoint, data) {
-        try {
-            const response = await fetch(apiEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-    
-            if (response.ok) {
-                const result = await response.json();
-                console.log(result.message);
-            } else {
-                console.error('Greška prilikom pohrane podataka:', response.status, response.statusText);
+        if (!resp.success) {
+          switch (resp.error) {
+            case "invalid_credentials": {
+              return alert(
+                "Nevaljani email ili password. Molimo probajte ponovno"
+              );
             }
-        } catch (error) {
-            console.error('Greška prilikom izvršavanja fetch zahtjeva:', error);
+          }
+
+          return alert(
+            `Dogodila se greška: ${resp.error}. Molimo probajte ponovno`
+          );
         }
+
+        window.location = "/profesor/dashboard";
+
+        break;
+      }
+
+      case "student": {
+        const resp = await this.apiPost("/api/studenti/login", formDataObj);
+
+        if (!resp) {
+          return alert("Nešto je pošlo po krivu. Molimo probajte ponovno.");
+        }
+
+        if (!resp.success) {
+          switch (resp.error) {
+            case "invalid_credentials": {
+              return alert(
+                "Nevaljani email ili password. Molimo probajte ponovno"
+              );
+            }
+          }
+
+          return alert(
+            `Dogodila se greška: ${resp.error}. Molimo probajte ponovno`
+          );
+        }
+
+        window.location = "/student/dashboard";
+
+        break;
+      }
+    }
+  }
+
+  async handleSignup(event) {
+    event.preventDefault();
+
+    const $form = event.target;
+    const formData = new FormData($form);
+    const formDataObj = {
+      ...Object.fromEntries(formData.entries()),
+      subject: formData.getAll("subject"),
+    };
+
+    console.log("Data object to be sent to the server:", formDataObj);
+
+    const resp = await this.apiPost("/api/studenti", formDataObj);
+
+    if (!resp) {
+      return alert("Nešto je pošlo po krivu. Molimo probajte ponovno.");
     }
 
+    if (resp.error) {
+      return alert(
+        `Dogodila se greška: ${resp.error}. Molimo probajte ponovno`
+      );
+    }
+
+    console.log(resp);
+  }
+
+  async apiPost(url, data) {
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+
+        return null;
+      });
+  }
+
+  async saveDataToDatabase(apiEndpoint, data) {
+    try {
+      const response = await fetch(apiEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result.message);
+      } else {
+        console.error(
+          "Greška prilikom pohrane podataka:",
+          response.status,
+          response.statusText
+        );
+      }
+    } catch (error) {
+      console.error("Greška prilikom izvršavanja fetch zahtjeva:", error);
+    }
+  }
 }
 
-customElements.define('signup-form', SignupForm);
+customElements.define("signup-form", SignupForm);

@@ -1,21 +1,24 @@
-const express = require("express")
-const router = express.Router()
-const sqlite3 = require('sqlite3').verbose();
+const express = require("express");
+const router = express.Router();
 
-router.use(express.json())
+router.get("/predmeti", async (req, res) => {
+  if (!req.session || req.session.role !== "student") {
+    return res.status(403).json([]);
+  }
 
-router.get("/", (request,response)=>{
-    let predmeti=[]
-    const db = new sqlite3.Database('./classroom.db');
-    db.all('SELECT * FROM predmeti', (error, rows) => {
-        if (error) {
-            ;
-        }else{
-            predmeti = rows
-        }
-        response.send(predmeti);
-        db.close()
-    })
-})
+  try {
+    const rows = await req.DB.all(
+      `SELECT predmeti.id, predmeti.naziv FROM predmeti
+      LEFT JOIN predmeti_studenti ON predmeti.id = predmeti_studenti.predmet_id
+      WHERE predmeti_studenti.student_id = ?`,
+      [req.session.data.id]
+    );
 
-module.exports = router
+    return res.json(rows);
+  } catch (error) {
+    console.error("Error fetching subjects:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+module.exports = router;
