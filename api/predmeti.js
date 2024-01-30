@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 
-router.get("/predmeti", async (req, res) => {
+router.get("/", async (req, res) => {
   if (!req.session || req.session.role !== "student") {
     return res.status(403).json([]);
   }
